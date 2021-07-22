@@ -1,18 +1,19 @@
 """
-Connection Macro Main module
+Unit Diagram Reader (Connection Macro) Main module
+Top-level module containing the the GUI and main program loop.
 
 Created on Tue Feb  9 10:21:22 2021
-
 @author: tfahry, Network Rail C&CA
 Requires Python 3.8 or newer. (Python 3.9 EXEs will not run on Windows 7.)
 
-Top-level Connection Macro module containing the the GUI and main program loop.
 
-To set up the environment if this is your first time running this code:
+All commands in this section need to be typed into Anaconda Prompt. (Start > Anaconda Prompt).
+
+0. To set up the environment if this is your first time running this code:
 conda env create -f environment.yml
-conda activate connectionmacro
+conda activate unitdiagramreader
 
-1. To run:
+1. To run the program:
 python main.py
 
 2. To compile to an .exe:
@@ -24,13 +25,25 @@ pyinstaller --clean --onefile --noconsole main.py -n ConnectionMacro.exe
 
 And run ConnectionMacro.exe from a terminal to read the error description.
 
-3. To update the GUI if you edit the ConnectionMacroUI.ui:
+3.To edit the GUI:
+designer
+
+After editing, to compile the GUI into the ConnectionMacroUI.py file:
 pyuic5 '.\qt\ConnectionMacroUI.ui' -o ConnectionMacroUI.py
 
 4. To export an environment:
 conda env export -n connectionmacro --from-history | Out-File environment.yml -Encoding utf8
 
-Make sure the encoding is utf-8 (not UTF-8 with BOM) by opening in VS Code and checking.
+Make sure the encoding is utf-8 (not UTF-8 with BOM) by opening in VS Code or Notepad++ and checking.
+
+5. A note on Spyder:
+If you want to use Spyder to run or debug the connection macro, open Spyder inside the unitdiagramreader environment by typing 
+
+spyder
+
+into Anaconda Prompt while in the unitdiagramreader environment. If it isn't installed, just
+
+conda install spyder
 """
 
 import sys
