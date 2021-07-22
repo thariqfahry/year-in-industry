@@ -1,0 +1,13 @@
+/*
+!.gitignore
+!.gitattributes
+!RSXParser.py
+!connectionGenerator.py
+!NRFunctions.py
+!main.py
+!ConnectionMacroUI.py
+!UnitDiagramReader.py
+!transitiontime.py
+!qt
+!environment.yml
+!humanhash.py
