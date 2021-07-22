@@ -18,7 +18,6 @@ Feel free to open any of the .py files to see what they do. After you make any c
  - We recommend using the Spyder editor to edit Python files. It should already be in your Start menu if you installed Anaconda.
      - To run the Unit Diagram Reader in Spyder, open ```main.py``` in Spyder, and click the green 'Run' button at the top.
  - Instructions on how to compile to an .EXE (so that you can send the program to non-coders) are found at the top of main.py.
- - If you would like to make permanent changes or upgrades to the Unit Diagram Reader, e-mail Ed <edward.tollinton at networkrail.co.uk> so that you can be added as a contributor to this GitHub and merge your changes.
 
 ## Wishlist (as of 20/05/2021)
 
