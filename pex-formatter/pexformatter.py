@@ -64,8 +64,8 @@ def make_template_from_header(timetable_name,thd_line,tdt_lines):
     columns = ['Line in file', 'Timetable','TSC','Train Headcode','Operator (Code)','Operator (Name)','Train Class',
     'Train Speed/Load','Run Start (Code)','Run End (Code)','Run Start (Name)','Run End (Name)','Run Overview',
     'Run Start (Time)','Run End (Time)','Run Time Range','Operating Day','From (Time)','To (Time)','From (Code)',
-    'To (Code)','From (Name)','To (Name)','Route','Running Line','Platform','Run Type','Sectional Running Time',
-    'Runtime','Dwell','Movement Type','Engineering Allowance','Pathing Allowance','Performance Allowance',
+    'To (Code)','From (Name)','To (Name)','Route','Running Line','Platform','Run Type','Sectional Running Time','Cumulative Sectional Running Time',
+    'Runtime','Dwell','Cumulative Dwell','Movement Type','Engineering Allowance','Pathing Allowance','Performance Allowance',
     'Adjustment Allowance','Cumulative Allowance','Train Description']
     
     empty_entry = dict([(column, '') for column in columns])
@@ -108,8 +108,8 @@ def make_template_from_header(timetable_name,thd_line,tdt_lines):
     template['TSC'] = mct[0]
     template['Train Speed/Load'] = mct[2] + '/' + mct[1]
     
-    #initialise Cumulative Allowance to 0, since that's what it should be at the start of a run.
-    template['Cumulative Allowance'] = 0
+    #initialise Cumulative Allowance, Dwell and Sectional Running Time to 0, since that's what they should be at the start of a run.
+    template['Cumulative Allowance'] = template['Cumulative Dwell'] = template['Cumulative Sectional Running Time'] = 0
     
     return template
 
@@ -198,6 +198,9 @@ def get_entries_from_run(template, run):
                     entry['To (Name)']    = tiplocdict[entry['To (Code)']]
                     entry['Route'] = entry['From (Name)']+' to '+entry['To (Name)']
                     
+                    template['Cumulative Dwell'] += entry['Dwell']
+                    entry['Cumulative Dwell'] = template['Cumulative Dwell']
+                    
                     entries.append(entry)
 
             elif line[0] == 'TMV':
@@ -268,6 +271,9 @@ def get_entries_from_run(template, run):
                     entry['Runtime'] = (st(entry['To (Time)']) - st(entry['From (Time)'])).total_seconds()/60
                     
                 entry['Sectional Running Time'] = entry['Runtime'] - sum([ppt(line[n]) for n in range(10,14)])
+                
+                template['Cumulative Sectional Running Time'] += entry['Sectional Running Time']
+                entry['Cumulative Sectional Running Time'] = template['Cumulative Sectional Running Time']
                 
                 entry['Dwell'] = prev_dwell = 0
                 
@@ -340,8 +346,8 @@ def write_csv(formatted_df, output_file_name):
     formatted_df.to_csv(output_file_name)
     
 #%% use this to test the formatter without having to open the GUI
-# if __name__ == '__main__':
-#     pass
-#     df = formatpex('file.pex', 'lookup_tables/operator-lookup.csv','lookup_tables/tiploc-lookup.csv' )
-#     print(df)
-#     write_csv(df, 'output.csv')
+if __name__ == '__main__':
+    pass
+    df = formatpex('file.pex', 'lookup_tables/operator-lookup.csv','lookup_tables/tiploc-lookup.csv' )
+    print(df)
+    write_csv(df, 'output.csv')
