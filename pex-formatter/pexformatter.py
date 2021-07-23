@@ -66,7 +66,7 @@ def make_template_from_header(timetable_name,thd_line,tdt_lines):
     'Run Start (Time)','Run End (Time)','Run Time Range','Operating Day','From (Time)','To (Time)','From (Code)',
     'To (Code)','From (Name)','To (Name)','Route','Running Line','Platform','Run Type','Sectional Running Time',
     'Runtime','Dwell','Movement Type','Engineering Allowance','Pathing Allowance','Performance Allowance',
-    'Adjustment Allowance','Train Description']
+    'Adjustment Allowance','Cumulative Allowance','Train Description']
     
     empty_entry = dict([(column, '') for column in columns])
     template = empty_entry.copy()    
@@ -107,6 +107,9 @@ def make_template_from_header(timetable_name,thd_line,tdt_lines):
     
     template['TSC'] = mct[0]
     template['Train Speed/Load'] = mct[2] + '/' + mct[1]
+    
+    #initialise Cumulative Allowance to 0, since that's what it should be at the start of a run.
+    template['Cumulative Allowance'] = 0
     
     return template
 
@@ -246,6 +249,16 @@ def get_entries_from_run(template, run):
                 entry['Performance Allowance'] = ppt(line[12])
                 entry['Adjustment Allowance']  = ppt(line[13])
                 
+                # A TMV is the only type of row that has an allowance, and therefore the only type of row where the Cumulative Allowance 
+                # could change. Here, we increment the template dict's 'Cumulative Allowance' by the sum of allowances in this row.
+                # Since the template dict is shared (and copied for each entry), this will cause it to be a rolling total of allowances
+                # which is what we want.
+                template['Cumulative Allowance'] += sum([ppt(line[_]) for _ in range(10,14)])
+                
+                #copy this value manually, since it's only the template we've updated and not the current entry 
+                #(otherwise the Cumulative Allowance will always be offset by 1)
+                entry['Cumulative Allowance'] = template['Cumulative Allowance']
+                
                 #if there is a movement across midnight, this particular runtime needs to have only its To (time) incremented by a day
                 if st(line[7]) < st(line[6]):
                     entry['Runtime'] = (st(entry['To (Time)'], add_days=1) - st(entry['From (Time)'])).total_seconds()/60
@@ -326,10 +339,9 @@ def formatpex(pex_file, toc_code_lookup_file, tiploc_lookup_file):
 def write_csv(formatted_df, output_file_name):
     formatted_df.to_csv(output_file_name)
     
-#%%
-if __name__ == '__main__':
-    pass
-    #df = formatpex('file.pex', 'lookup_tables/operator-lookup.csv','lookup_tables/tiploc-lookup.csv' )
-    #print(df)
-    #write_csv(df, 'output.csv')
-      
+#%% use this to test the formatter without having to open the GUI
+# if __name__ == '__main__':
+#     pass
+#     df = formatpex('file.pex', 'lookup_tables/operator-lookup.csv','lookup_tables/tiploc-lookup.csv' )
+#     print(df)
+#     write_csv(df, 'output.csv')

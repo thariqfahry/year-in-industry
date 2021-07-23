@@ -6,7 +6,7 @@ Created on Wed Jun 30 14:02:12 2021
 
 Top-level module of PEX formatter.
 """
-VERSION = 'JUL09'
+VERSION = 'JUL23'
 
 import sys
 import traceback
